@@ -72,11 +72,14 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", attacker_mac_address[0], attacker_mac_address[1], attacker_mac_address[2], attacker_mac_address[3], attacker_mac_address[4], attacker_mac_address[5]);
+
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
 
         // arp request 전송
     arp_packet arp_packet_get_sender_mac_packet;
     arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, sender_ip);
+    
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
