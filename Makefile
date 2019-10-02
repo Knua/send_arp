@@ -8,11 +8,11 @@ all: send_arp
 send_arp: send_arp.o arp_packet.o
 	g++ -o send_arp send_arp.o arp_packet.o
 
-arp_packet.o: arp_packet.c arp_packet.h
-	g++ -c -o arp_packet.o arp_packet.c
-
 send_arp.o: send_arp.c arp_packet.h
 	g++ -c -o send_arp.o send_arp.c
+
+arp_packet.o: arp_packet.c arp_packet.h
+	g++ -c -o arp_packet.o arp_packet.c
 
 # 최하단의 clean target 또한 암묵적 약속
 clean:

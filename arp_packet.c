@@ -26,7 +26,7 @@ void copy_4byte_by_one_bit(uint8_t bit, uint8_t * dst){
 arp_packet * arp_request_get_sender_mac_addr
 (uint8_t * src_mac, uint8_t * dst_ip){ // dst_mac 을 모르는 상황
 
-    arp_packet * send_packet = malloc(sizeof(arp_packet));
+    arp_packet * send_packet = (arp_packet *)malloc(sizeof(arp_packet));
 
     copy_6byte_by_one_bit(0xff, (* send_packet).destination_mac_address);
     copy_6byte(src_mac, (* send_packet).source_mac_address);
