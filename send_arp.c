@@ -113,9 +113,9 @@ int main(int argc, char* argv[])
             }
         }
         if(continue_detect) continue;
-        for(int i = 0; i < 6; i++) sender_mac[i] = * packet + ARP_SOURCE_MAC_ADDR + i;
+        for(int i = 0; i < 6; i++) sender_mac[i] = *(packet + ARP_SOURCE_MAC_ADDR + i);
     }
-    for(int i = 0; i < 6; i++) printf("%02x\n", sender_mac[i]);
+    for(int i = 0; i < 6; i++) printf("%d: %02x\n", i, sender_mac[i]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
 
