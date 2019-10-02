@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
             }
         }
     }
+    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", sender_mac[0],sender_mac[1],sender_mac[2],sender_mac[3],sender_mac[4],sender_mac[5]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     arp_packet arp_packet_deceive_sender;
