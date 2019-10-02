@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
 
         // arp response 수신
     uint8_t sender_mac[6];
+    int packetNum = 0;
     while (true) {
         struct pcap_pkthdr* header;
         const u_char * packet;
@@ -94,8 +95,14 @@ int main(int argc, char* argv[])
         if (res == 0) continue;
         if (res == -1 || res == -2) break;
         
+        printf("[Packet %d]\n", ++packetNum);
+        printf("\t Packet size                        : %u bytes\n", header->caplen);
+    /*
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
+        for(int i = 0; i < header->caplen; i++){
+            printf("%02x\n", packet[i]);
+        }
         if(*((uint16_t *)(packet) + ETHERTYPE) != 0x0806) continue; // ARP packet 확인
         if(*((uint16_t *)(packet) + ARP_OPCODE) != 0x2) continue; // ARP reply 확인
             // attacker 의 ARP request 에 대한 reply 인지 확인
@@ -110,6 +117,7 @@ int main(int argc, char* argv[])
         }
         if(continue_detect) continue;
         for(int i = 0; i < 6; i++) sender_mac[i] = * packet + ARP_SOURCE_MAC_ADDR + i;
+    */
     }
 
     for(int i = 0; i < 6; i++) printf("%02x\n", sender_mac[i]);
