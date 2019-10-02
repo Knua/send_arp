@@ -99,8 +99,8 @@ int main(int argc, char* argv[])
         printf("\t Packet size                        : %u bytes\n", header->caplen);
         for(int i = 0; i < header->caplen; i++) printf("0x%02x ", packet[i]);
         printf("\n");
-        printf("ethertype: %x\n", (uint16_t)(*(packet + ETHERTYPE)));
-        printf("arp opcode: %x\n", (uint16_t)(*(packet + ARP_OPCODE)));
+        printf("ethertype: %x\n", (uint16_t *)(packet + ETHERTYPE));
+        printf("arp opcode: %x\n", (uint16_t *)(packet + ARP_OPCODE));
         printf("mac addr\n");
         int start = ARP_DESTINATION_MAC_ADDR;
         int end = start + MAC_address_length;
@@ -109,8 +109,8 @@ int main(int argc, char* argv[])
             printf("%02x\n", *(packet+i));
         }
 
-        if((uint16_t)(*(packet + ETHERTYPE)) == (uint16_t)Ethertype_ARP){ // ARP packet 확인
-            if((uint16_t)(*(packet + ARP_OPCODE)) == (uint16_t)ARP_operation_reply){ // ARP reply 확인
+        if((uint16_t)(*(packet + ETHERTYPE)) == Ethertype_ARP){ // ARP packet 확인
+            if((uint16_t)(*(packet + ARP_OPCODE)) == ARP_operation_reply){ // ARP reply 확인
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
