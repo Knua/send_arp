@@ -96,8 +96,8 @@ int main(int argc, char* argv[])
         
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
-        if((uint16_t *)(packet + ETHERTYPE) != 0x0806) continue; // ARP packet 확인
-        if((uint16_t *)(packet + ARP_OPCODE) != 0x2) continue; // ARP reply 확인
+        if(*((uint16_t *)(packet) + ETHERTYPE) != 0x0806) continue; // ARP packet 확인
+        if(*((uint16_t *)(packet) + ARP_OPCODE) != 0x2) continue; // ARP reply 확인
             // attacker 의 ARP request 에 대한 reply 인지 확인
         bool continue_detect = false;
         int start = ARP_DESTINATION_MAC_ADDR;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
             }
         }
         if(continue_detect) continue;
-        for(int i = 0; i < 6; i++) sender_mac[i] = (uint8_t *)packet + ARP_SOURCE_MAC_ADDR + i;
+        for(int i = 0; i < 6; i++) sender_mac[i] = * packet + ARP_SOURCE_MAC_ADDR + i;
     }
 
     for(int i = 0; i < 6; i++) printf("%02x\n", sender_mac[i]);
