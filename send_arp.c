@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
     }
 
     uint8_t attacker_mac_address[6];
-
     if (success) memcpy(attacker_mac_address, ifr.ifr_hwaddr.sa_data, 6);
 // getting mac address 끝
 
@@ -64,7 +63,7 @@ int main(int argc, char* argv[])
     char * sender_ip = argv[2];
     char * target_ip = argv[3];
 
-    int8_t errbuf[PCAP_ERRBUF_SIZE];
+    char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t * handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
     if (handle == NULL) {
         fprintf(stderr, "couldn't open device %s: %s\n", dev, errbuf);
@@ -73,9 +72,9 @@ int main(int argc, char* argv[])
 
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
     arp_packet * arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, sender_ip);
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, (uint8_t *)sender_ip);
 
-    if(pcap_sendpacket(handle, arp_packet_get_sender_mac_packet, ARP_PACKET_LEN) != 0){
+    if(pcap_sendpacket(handle, (uint8_t *)arp_packet_get_sender_mac_packet, ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
         return -1;
     }
