@@ -82,7 +82,8 @@ int main(int argc, char* argv[])
         printf("[Error] packet sending is failed.\n");
         return -1;
     }
-
+    sleep(1);
+    
         // arp response 수신
     uint8_t sender_mac[6];
     int packetNum = 0;
@@ -111,7 +112,6 @@ int main(int argc, char* argv[])
 
         if(ntohs(*((uint16_t *)(packet + ETHERTYPE))) == Ethertype_ARP){ // ARP packet 확인
             if(ntohs(*((uint16_t *)(packet + ARP_OPCODE))) == ARP_operation_reply){ // ARP reply 확인
-                printf("checking!!!\n\n\n");
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
