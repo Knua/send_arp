@@ -75,18 +75,9 @@ int main(int argc, char* argv[])
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
 
         // arp request 전송
-    
-    // in host
-    uint8_t attacker_mac_host[6];
-    attacker_mac_host[0] = 0x38;
-    attacker_mac_host[1] = 0xf9;
-    attacker_mac_host[2] = 0xd3;
-    attacker_mac_host[3] = 0x73;
-    attacker_mac_host[4] = 0xa4;
-    attacker_mac_host[5] = 0x24;
 
     arp_packet arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_host, sender_ip);
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac, sender_ip);
     
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
@@ -109,12 +100,12 @@ int main(int argc, char* argv[])
 
         if(ntohs(*((uint16_t *)(packet + ETHERTYPE))) == Ethertype_ARP){ // ARP packet 확인
             if(ntohs(*((uint16_t *)(packet + ARP_OPCODE))) == ARP_operation_reply){ // ARP reply 확인
-                printf("checking!!\n");
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
                 for(int i = start; i < end; i++){
-                    if(*(packet + i) != attacker_mac_host[i - start]){
+                    if(*(packet + i) != attacker_mac[i - start]){
+                        printf("hmm..\n");
                         continue_detect = true;
                         break;
                     }
