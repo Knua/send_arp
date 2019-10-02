@@ -59,9 +59,13 @@ int main(int argc, char* argv[])
     }
 
     // uint8_t * attacker_mac_addres <- saves attacker(my) mac address
-    char * dev       = argv[1];
-    char * sender_ip = argv[2];
-    char * target_ip = argv[3];
+    char * dev              = argv[1];
+    char * sender_ip_string = argv[2];
+    char * target_ip_string = argv[3];
+    uint8_t sender_ip[4];
+    uint8_t target_ip[4];
+    ip_str_to_addr(sender_ip_string, sender_ip);
+    ip_str_to_addr(target_ip_string, target_ip);
 
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t * handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
@@ -72,7 +76,7 @@ int main(int argc, char* argv[])
 
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
     arp_packet arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, (uint8_t *)sender_ip);
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, sender_ip);
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
@@ -81,7 +85,7 @@ int main(int argc, char* argv[])
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     for(int i = 0; i < 42; i++){
-        printf("%x\n", ((uint8_t *)(& arp_packet_get_sender_mac_packet)) + i);
+        printf("%02x\n", *(((uint8_t *)(& arp_packet_get_sender_mac_packet)) + i));
     }
 
     return 0;

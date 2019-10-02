@@ -1,7 +1,22 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <netinet/in.h>
 #include "arp_packet.h"
+
+void ip_str_to_addr(char * str, uint8_t * addr){
+    int nowNum = 0, nowidx = 0;
+    int str_len = strlen(str);
+    for(int i = 0; i < str_len; i++){
+        if(str[i] == '.'){
+            addr[nowidx++] = nowNum;
+            nowNum = 0;
+        }
+        nowNum *= 10;
+        nowNum += str[i] - '0';
+    }
+    addr[nowidx] = nowNum; // x.y.z.k 에서 k는 이 순간 저장
+}
 
 void copy_6byte(uint8_t * src, uint8_t * dst){
     for(int i = 0; i < 6; i++){

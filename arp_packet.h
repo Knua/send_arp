@@ -3,13 +3,14 @@
 
 #define ARP_PACKET_LEN 42
 #define Ethertype_IPv4 0x0800
-#define Ethertype_ARP  0x0800
+#define Ethertype_ARP  0x0806
 #define ARP_hardware_type_Ethernet 1
 #define MAC_address_length 6
 #define IPv4_address_length 4
 #define ARP_operation_request 1
 #define ARP_operation_reply 2
 
+void ip_str_to_addr(char * str, uint8_t * addr);
 void copy_6byte(uint8_t * source, uint8_t * destination);
 void copy_4byte(uint8_t * source, uint8_t * destination);
 void copy_6byte_by_one_bit(uint8_t bit, uint8_t * dst);
