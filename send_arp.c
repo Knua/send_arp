@@ -12,6 +12,35 @@
 #define max(a,b) (a > b ? a : b) 
 #define min(a,b) (a < b ? a : b) // 작성한 헤더
 
+
+
+uint32_t Ethernet_print(const u_char * packet){
+  printf("\t (Ethernet) MAC source address      : ");
+    for(int i = 6; i < 12; i++){
+      printf("%02x", packet[i]);
+      if(i == 11) break; 
+      printf(":");
+    }
+    printf("\n");
+    printf("\t (Ethernet) MAC destination address : ");
+    for(int i = 0; i < 6; i++){
+      printf("%02x", packet[i]);
+      if(i == 5) break;
+      printf(":");
+    }
+    printf("\n");
+    uint16_t protocol_type = 0;
+    printf("\t (Ethernet) Protocol Type           : ");
+    for(int i = 12; i < 14; i++){
+      protocol_type += packet[i] * pow(256, 13-i);
+    }
+    printf("0x%04x \n", protocol_type);
+
+    return 14; // ethernet header end
+}
+
+
+
 void usage() {
     printf("syntax: send_arp <interface> <sender ip> <target ip>\n");
     printf("sample: send_arp wlan0 192.168.10.2 192.168.10.1\n");
@@ -95,25 +124,29 @@ int main(int argc, char* argv[])
         if (res == 0) continue;
         if (res == -1 || res == -2) break;
 
+        printf("[Packet %d]\n", ++packetNum);
+        printf("\t Packet size                        : %u bytes\n", header->caplen);
+        uint32_t ethernet_header_end = Ethernet_print(packet);
+
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
-        for(int i = 0; i < header->caplen; i++){
-            printf("%02x\n", packet[i]);
-        }
-        if(*((uint16_t *)(packet) + ETHERTYPE) != 0x0806) continue; // ARP packet 확인
-        if(*((uint16_t *)(packet) + ARP_OPCODE) != 0x2) continue; // ARP reply 확인
-            // attacker 의 ARP request 에 대한 reply 인지 확인
-        bool continue_detect = false;
-        int start = ARP_DESTINATION_MAC_ADDR;
-        int end = start + MAC_address_length;
-        for(int i = start; i < end; i++){
-            if(*(packet + i) != attacker_mac_address[i - start]){
-                continue_detect = true;
+
+        if((uint16_t *)(packet + ETHERTYPE) == Ethertype_ARP){ // ARP packet 확인
+            if((uint16_t *)(packet + ARP_OPCODE) == ARP_operation_reply){ // ARP reply 확인
+                int start = ARP_DESTINATION_MAC_ADDR;
+                int end = start + MAC_address_length;
+                bool continue_detect = false;
+                for(int i = start; i < end; i++){
+                    if(*(packet + i) != attacker_mac_address[i - start]){
+                        continue_detect = true;
+                        break;
+                    }
+                }
+                if(continue_detect) continue;
+                for(int i = 0; i < 6; i++) sender_mac[i] = *(packet + ARP_SOURCE_MAC_ADDR + i);
                 break;
             }
         }
-        if(continue_detect) continue;
-        for(int i = 0; i < 6; i++) sender_mac[i] = *(packet + ARP_SOURCE_MAC_ADDR + i);
     }
     for(int i = 0; i < 6; i++) printf("%d: %02x\n", i, sender_mac[i]);
 
