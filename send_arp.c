@@ -94,10 +94,7 @@ int main(int argc, char* argv[])
         int res = pcap_next_ex(handle, &header, &packet);
         if (res == 0) continue;
         if (res == -1 || res == -2) break;
-        
-        printf("[Packet %d]\n", ++packetNum);
-        printf("\t Packet size                        : %u bytes\n", header->caplen);
-    /*
+
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
         for(int i = 0; i < header->caplen; i++){
@@ -117,9 +114,7 @@ int main(int argc, char* argv[])
         }
         if(continue_detect) continue;
         for(int i = 0; i < 6; i++) sender_mac[i] = * packet + ARP_SOURCE_MAC_ADDR + i;
-    */
     }
-
     for(int i = 0; i < 6; i++) printf("%02x\n", sender_mac[i]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
