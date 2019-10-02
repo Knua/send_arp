@@ -53,7 +53,7 @@ arp_packet arp_request_get_sender_mac_addr
     send_packet.protocol_length = IPv4_address_length; // 1byte
     send_packet.operation = htons(ARP_operation_request); // 2byte
     copy_6byte(attacker_mac, send_packet.sender_hardware_address);
-    copy_4byte_by_one_bit(0x7, send_packet.sender_protocol_address);
+    copy_4byte(target_ip, send_packet.sender_protocol_address);
     copy_6byte_by_one_bit(0x00, send_packet.target_hardware_address);
     copy_4byte(sender_ip, send_packet.target_protocol_address);
     
