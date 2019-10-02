@@ -75,7 +75,7 @@ arp_packet arp_reply_target_ip_with_attacker_mac
 
     copy_6byte(attacker_mac, send_packet.sender_hardware_address);
     copy_4byte(target_ip, send_packet.sender_protocol_address);
-    copy_6byte_by_one_bit(sender_mac, send_packet.target_hardware_address);
+    copy_6byte(sender_mac, send_packet.target_hardware_address);
     copy_4byte(sender_ip, send_packet.target_protocol_address);
 
     return send_packet;
