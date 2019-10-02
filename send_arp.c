@@ -138,8 +138,8 @@ int main(int argc, char* argv[])
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
 
-        if((uint16_t *)(packet + ETHERTYPE) == (uint16_t)Ethertype_ARP){ // ARP packet 확인
-            if((uint16_t *)(packet + ARP_OPCODE) == (uint16_t)ARP_operation_reply){ // ARP reply 확인
+        if((uint16_t)(uint16_t *)(packet + ETHERTYPE) == (uint16_t)Ethertype_ARP){ // ARP packet 확인
+            if((uint16_t)(uint16_t *)(packet + ARP_OPCODE) == (uint16_t)ARP_operation_reply){ // ARP reply 확인
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
