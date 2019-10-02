@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     sleep(1);
-    
+
         // arp response 수신
     uint8_t sender_mac[6];
     int packetNum = 0;
@@ -96,22 +96,10 @@ int main(int argc, char* argv[])
 
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
-        printf("[Packet %d]\n", ++packetNum);
-        printf("\t Packet size                        : %u bytes\n", header->caplen);
-        for(int i = 0; i < header->caplen; i++) printf("0x%02x ", packet[i]);
-        printf("\n");
-        printf("ethertype: 0x%x\n", ntohs(*((uint16_t *)(packet + ETHERTYPE))));
-        printf("arp opcode: 0x%x\n", ntohs(*((uint16_t *)(packet + ARP_OPCODE))));
-        printf("mac addr\n");
-        int start = ARP_DESTINATION_MAC_ADDR;
-        int end = start + MAC_address_length;
-        bool continue_detect = false;
-        for(int i = start; i < end; i++){
-            printf("%02x\n", *(packet+i));
-        }
 
         if(ntohs(*((uint16_t *)(packet + ETHERTYPE))) == Ethertype_ARP){ // ARP packet 확인
             if(ntohs(*((uint16_t *)(packet + ARP_OPCODE))) == ARP_operation_reply){ // ARP reply 확인
+                printf("checking..!!\n");
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
