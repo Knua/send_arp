@@ -11,6 +11,7 @@ void ip_str_to_addr(char * str, uint8_t * addr){
         if(str[i] == '.'){
             addr[nowidx++] = nowNum;
             nowNum = 0;
+            continue;
         }
         nowNum *= 10;
         nowNum += str[i] - '0';
