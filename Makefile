@@ -8,7 +8,7 @@ all: send_arp
 send_arp: send_arp.o arp_packet.o
 	g++ -o send_arp send_arp.o arp_packet.o
 
-arp_packet.o: send_arp_packet.c arp_packet.h
+arp_packet.o: arp_packet.c arp_packet.h
 	g++ -c -o arp_packet.o arp_packet.c
 
 send_arp.o: send_arp.c arp_packet.h
