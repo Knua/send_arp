@@ -38,4 +38,5 @@ typedef struct _arp_packet {
     uint8_t target_protocol_address[4];
 } arp_packet; // 42byte
 
-arp_packet arp_request_get_sender_mac_addr(uint8_t * src_mac, uint8_t * dst_ip);
+arp_packet arp_request_get_sender_mac_addr(uint8_t * attacker_mac, uint8_t * sender_ip);
+arp_packet arp_reply_target_ip_with_attacker_mac(uint8_t * attacker_mac, uint8_t * sender_mac, uint8_t * target_ip, uint8_t * sender_ip);
