@@ -109,8 +109,8 @@ int main(int argc, char* argv[])
             printf("%02x\n", *(packet+i));
         }
 
-        if((uint16_t)(*(packet + ETHERTYPE)) == Ethertype_ARP){ // ARP packet 확인
-            if((uint16_t)(*(packet + ARP_OPCODE)) == ARP_operation_reply){ // ARP reply 확인
+        if(ntohs(*((uint16_t *)(packet + ETHERTYPE))) == Ethertype_ARP){ // ARP packet 확인
+            if(ntohs(*((uint16_t *)(packet + ARP_OPCODE))) == ARP_operation_reply){ // ARP reply 확인
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
