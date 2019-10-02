@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     }
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
-    
+    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", attacker_mac_address[0], attacker_mac_address[1], attacker_mac_address[2], attacker_mac_address[3], attacker_mac_address[4], attacker_mac_address[5]);
 
     return 0;
 }
