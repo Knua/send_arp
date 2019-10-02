@@ -13,6 +13,13 @@
 #define min(a,b) (a < b ? a : b) // 작성한 헤더
 
 
+uint32_t pow(uint32_t a, uint32_t n){ // return a^n
+  uint32_t result = 1;
+  while(n--){
+    result *= a;
+  }
+  return result;
+}
 
 uint32_t Ethernet_print(const u_char * packet){
   printf("\t (Ethernet) MAC source address      : ");
@@ -131,8 +138,8 @@ int main(int argc, char* argv[])
         // packet 분석해서 arp response 인 경우 break, 아니면 계속 반복
             // arp 인지 확인
 
-        if((uint16_t *)(packet + ETHERTYPE) == Ethertype_ARP){ // ARP packet 확인
-            if((uint16_t *)(packet + ARP_OPCODE) == ARP_operation_reply){ // ARP reply 확인
+        if((uint16_t *)(packet + ETHERTYPE) == (uint16_t)Ethertype_ARP){ // ARP packet 확인
+            if((uint16_t *)(packet + ARP_OPCODE) == (uint16_t)ARP_operation_reply){ // ARP reply 확인
                 int start = ARP_DESTINATION_MAC_ADDR;
                 int end = start + MAC_address_length;
                 bool continue_detect = false;
