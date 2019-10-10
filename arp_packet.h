@@ -17,6 +17,8 @@
 #define ARP_operation_reply 2
 
 void ip_str_to_addr(char * str, uint8_t * addr);
+void get_attacker_mac_addr(uint8_t * attacker_mac_addr);
+void get_attacker_ip_addr(uint8_t * attacker_ip_addr, char * dev);
 void copy_6byte(uint8_t * source, uint8_t * destination);
 void copy_4byte(uint8_t * source, uint8_t * destination);
 void copy_6byte_by_one_bit(uint8_t bit, uint8_t * dst);
@@ -38,5 +40,5 @@ typedef struct _arp_packet {
     uint8_t target_protocol_address[4];
 } arp_packet; // 42byte
 
-arp_packet arp_request_get_sender_mac_addr(uint8_t * attacker_mac, uint8_t * sender_ip, uint8_t * target_ip);
+arp_packet arp_request_get_sender_mac_addr(uint8_t * attacker_mac, uint8_t * sender_ip, uint8_t * target_ip, uint8_t * attacker_ip);
 arp_packet arp_reply_target_ip_with_attacker_mac(uint8_t * attacker_mac, uint8_t * sender_mac, uint8_t * target_ip, uint8_t * sender_ip);

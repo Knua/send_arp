@@ -1,14 +1,9 @@
-#include <sys/ioctl.h>
-#include <net/if.h> 
+#include <stdio.h>
 #include <unistd.h>
-#include <netinet/in.h>
-#include <string.h>
-// https://stackoverflow.com/questions/1779715/how-to-get-mac-address-of-your-machine-using-a-c-program
-// 에서 Jamesprite, Charles Salvia 의 코드를 참고하였습니다.
-
-#include "arp_packet.h"
 #include <pcap.h>
 #include <stdint.h>
+#include <arpa/inet.h>
+#include "arp_packet.h"
 
 void usage() {
     printf("syntax: send_arp <interface> <sender ip> <target ip>\n");
@@ -17,45 +12,13 @@ void usage() {
 
 int main(int argc, char* argv[]) 
 {
-// getting mac address 시작
-    struct ifreq ifr;
-    struct ifconf ifc;
-    char buf[1024];
-    int success = 0;
-
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
-    if (sock == -1) { /* handle error*/ };
-
-    ifc.ifc_len = sizeof(buf);
-    ifc.ifc_buf = buf;
-    if (ioctl(sock, SIOCGIFCONF, &ifc) == -1) { /* handle error */ }
-
-    struct ifreq* it = ifc.ifc_req;
-    const struct ifreq* const end = it + (ifc.ifc_len / sizeof(struct ifreq));
-
-    for (; it != end; ++it) {
-        strcpy(ifr.ifr_name, it->ifr_name);
-        if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
-            if (! (ifr.ifr_flags & IFF_LOOPBACK)) { // don't count loopback
-                if (ioctl(sock, SIOCGIFHWADDR, &ifr) == 0) {
-                    success = 1;
-                    break;
-                }
-            }
-        }
-        else { /* handle error */ }
-    }
-
-    uint8_t attacker_mac[6];
-    if (success) memcpy(attacker_mac, ifr.ifr_hwaddr.sa_data, 6);
-// getting mac address 끝
-
-// 여기서부터 작성한 코드
     if (argc != 4){
         usage();
         return -1;
     }
 
+    uint8_t attacker_mac[6];
+    uint8_t attacker_ip[4];
     char * dev              = argv[1];
     char * sender_ip_string = argv[2];
     char * target_ip_string = argv[3];
@@ -63,6 +26,8 @@ int main(int argc, char* argv[])
     uint8_t target_ip[4];
     ip_str_to_addr(sender_ip_string, sender_ip);
     ip_str_to_addr(target_ip_string, target_ip);
+    get_attacker_mac_addr(attacker_mac);
+    get_attacker_ip_addr(attacker_ip, dev);
 
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t * handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
@@ -74,10 +39,8 @@ int main(int argc, char* argv[])
     // 첫 번째로 할 일 - sender 의 mac address 를 알아야 함
 
         // arp request 전송
-
     arp_packet arp_packet_get_sender_mac_packet;
-    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac, sender_ip, target_ip);
-    
+    arp_packet_get_sender_mac_packet = arp_request_get_sender_mac_addr(attacker_mac, sender_ip, target_ip, attacker_ip);
 
     if(pcap_sendpacket(handle, (uint8_t *)(& arp_packet_get_sender_mac_packet), ARP_PACKET_LEN) != 0){
         printf("[Error] packet sending is failed.\n");
@@ -104,7 +67,6 @@ int main(int argc, char* argv[])
                 bool continue_detect = false;
                 for(int i = start; i < end; i++){
                     if(*(packet + i) != attacker_mac[i - start]){
-                        printf("hmm..\n");
                         continue_detect = true;
                         break;
                     }
